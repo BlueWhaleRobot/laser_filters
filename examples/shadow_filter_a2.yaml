@@ -15,3 +15,11 @@ scan_filter_chain:
   type: laser_filters/LaserScanFootprintFilter
   params:
     inscribed_radius: 0.35
+- name: range
+  type: laser_filters/LaserScanRangeFilter
+  params:
+    use_message_range_limits: false
+    lower_threshold: 0.3
+    upper_threshold: 8.0
+    lower_replacement_value: 0.3
+    upper_replacement_value: .inf
