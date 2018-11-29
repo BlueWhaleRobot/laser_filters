@@ -178,7 +178,7 @@ namespace laser_filters{
         if(angle3 < angle4) continue;
         angle3 = angle3 - angle4;
         // ROS_INFO("angle2 : %f",angle3);
-        if(angle3 < 70)
+        if(angle3 < 70 || ((i-left_i)==1&&(right_i-i)==1))
         {
           //是尖峰
           if (scan_in.ranges[i] < scan_in.ranges[left_i] && scan_in.ranges[i] < scan_in.ranges[right_i]) // delete neighbor if they are farther away (note not self)
