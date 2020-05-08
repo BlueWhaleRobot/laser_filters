@@ -4,14 +4,19 @@ scan_filter_chain:
   params:
     min_angle: 5
     max_angle: 175
-    neighbors: 10
+    neighbors: 5
     window: 1
+- name: angle
+  type: laser_filters/LaserScanAngularBoundsFilter
+  params:
+    lower_angle: -1.6
+    upper_angle: 1.6
 - name: range
   type: laser_filters/LaserScanRangeFilter
   params:
     use_message_range_limits: false
     lower_threshold: 0.15
-    upper_threshold: 25.0
+    upper_threshold: 20.0
     lower_replacement_value: 0.15
     upper_replacement_value: .inf
 
