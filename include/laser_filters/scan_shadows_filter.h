@@ -156,6 +156,11 @@ public:
   {
   }
 
+  double getAngleWithViewpoint(const float r1, const float r2, const float included_angle)
+  {
+    return atan2(r2 * sin(included_angle), r1 - r2 * cos(included_angle));
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   /** \brief Filter shadow points based on 3 global parameters: min_angle, max_angle
    * and window. {min,max}_angle specify the allowed angle interval (in degrees)
