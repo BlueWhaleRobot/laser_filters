@@ -1,8 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 * 
-*  Copyright (c) 2008, Willow Garage, Inc.
-*  Copyright (c) 2020, Eurotec B.V.
+*  Copyright (c) 2017, laser_filters authors
 *  All rights reserved.
 * 
 *  Redistribution and use in source and binary forms, with or without
@@ -31,32 +30,59 @@
 *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
-*
-*  \author Vijay Pradeep, Rein Appeldoorn
-*
 *********************************************************************/
 
-#pragma once
+/*
+\author Atsushi Watanabe (SEQSENSE, Inc.)
+*/
 
-#include <dynamic_reconfigure/server.h>
-#include <filters/filter_base.h>
-#include <laser_filters/IntensityFilterConfig.h>
-#include <sensor_msgs/LaserScan.h>
+#include <gtest/gtest.h>
+#include <angles/angles.h>
 
-namespace laser_filters
+#include "laser_filters/scan_shadow_detector.h"
+
+double getAngleWithViewpoint(const float r1, const float r2, const float included_angle)
 {
-class LaserScanIntensityFilter : public filters::FilterBase<sensor_msgs::LaserScan>
+  return atan2(r2 * sin(included_angle), r1 - r2 * cos(included_angle));
+}
+
+bool isShadowPureImpl(const float r1, const float r2, const float included_angle, const double min_angle, const double max_angle)
 {
-public:
-  LaserScanIntensityFilter();
-  bool configure();
-  bool update(const sensor_msgs::LaserScan& input_scan, sensor_msgs::LaserScan& output_scan);
+  const double angle = fabs(angles::to_degrees(
+      getAngleWithViewpoint(r1, r2, included_angle)));
+  if (angle < min_angle || angle > max_angle)
+    return true;
+  return false;
+}
 
-private:
-  std::shared_ptr<dynamic_reconfigure::Server<IntensityFilterConfig>> dyn_server_;
-  void reconfigureCB(IntensityFilterConfig& config, uint32_t level);
-  boost::recursive_mutex own_mutex_;
+TEST(ScanShadowDetector, ShadowDetectionGeometry)
+{
+  for (float min_angle = 90.0; min_angle >= 0.0; min_angle -= 5.0)
+  {
+    for (float max_angle = 90.0; max_angle <= 180; max_angle += 5.0)
+    {
+      laser_filters::ScanShadowDetector detector;
+      detector.configure(angles::from_degrees(min_angle), angles::from_degrees(max_angle));
 
-  IntensityFilterConfig config_ = IntensityFilterConfig::__getDefault__();
-};
+      for (float r1 = 0.1; r1 < 1.0; r1 += 0.1)
+      {
+        for (float r2 = 0.1; r2 < 1.0; r2 += 0.1)
+        {
+          for (float inc = 0.01; inc < 0.1; inc += 0.02)
+          {
+            // Compare with original ScanShadowsFilter implementation
+            EXPECT_EQ(
+                detector.isShadow(r1, r2, inc),
+                isShadowPureImpl(r1, r2, inc, min_angle, max_angle));
+          }
+        }
+      }
+    }
+  }
+}
+
+int main(int argc, char **argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
