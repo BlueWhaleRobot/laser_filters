@@ -3,7 +3,7 @@ scan_filter_chain:
   type: laser_filters/LaserScanAngularBoundsFilter
   params:
     lower_angle: 1.6
-    upper_angle: 4.8
+    upper_angle: 4.65
 # - name: footprint_filter
 #   type: laser_filters/LaserScanFootprintFilter
 #   params:
