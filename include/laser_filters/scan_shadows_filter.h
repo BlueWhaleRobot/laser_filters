@@ -116,9 +116,19 @@ namespace laser_filters{
       scan_out = scan_in;
 
       std::set<int> indices_to_delete;
+      float range_k_2=-2,range_k_1=-1,range_k=0;
       // For each point in the current line scan
       for (unsigned int i = 0; i < scan_in.ranges.size(); i++)
       {
+        range_k = scan_in.ranges[i];
+        //ROS_ERROR("range_k  %f range_angle %f",range_k, range_angle);
+        if(std::fabs(range_k - range_k_1)>0.1 || std::fabs(range_k_1 - range_k_2)>0.1)
+        {
+            //去除孤立点
+            indices_to_delete.insert(i);
+        }
+        range_k_2 = range_k_1;
+        range_k_1 = range_k;
         for (int y = -window_; y < window_ + 1; y++)
         {
           int j = i + y;
