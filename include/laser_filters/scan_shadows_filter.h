@@ -125,7 +125,7 @@ namespace laser_filters{
         if(std::fabs(range_k - range_k_1)>0.1 || std::fabs(range_k_1 - range_k_2)>0.1)
         {
             //去除孤立点
-            indices_to_delete.insert(i);
+            //indices_to_delete.insert(i);
         }
         range_k_2 = range_k_1;
         range_k_1 = range_k;
