@@ -1,17 +1,4 @@
 scan_filter_chain:
-- name: angle
-  type: laser_filters/LaserScanAngularBoundsFilterInPlace
-  params:
-    lower_angle: -1.6
-    upper_angle: 1.6
-- name: range
-  type: laser_filters/LaserScanRangeFilter
-  params:
-    use_message_range_limits: false
-    lower_threshold: 0.15
-    upper_threshold: 12.0
-    lower_replacement_value: -.inf
-    upper_replacement_value: .inf
 - name: speckle_filter
   type: laser_filters/LaserScanSpeckleFilter
   params:
@@ -29,4 +16,4 @@ scan_filter_chain:
 
     # filter_type[0] (Distance): Number of consecutive ranges that will be tested for max_distance
     # filter_type[1] (RadiusOutlier): Minimum number of neighbors
-    filter_window: 3
+    filter_window: 2

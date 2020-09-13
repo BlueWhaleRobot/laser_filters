@@ -1,8 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 * 
-*  Copyright (c) 2008, Willow Garage, Inc.
-*  Copyright (c) 2020, Eurotec B.V.
+*  Copyright (c) 2017, laser_filters authors
 *  All rights reserved.
 * 
 *  Redistribution and use in source and binary forms, with or without
@@ -31,32 +30,52 @@
 *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
-*
-*  \author Vijay Pradeep, Rein Appeldoorn
-*
 *********************************************************************/
 
-#pragma once
+/*
+\author Atsushi Watanabe (SEQSENSE, Inc.)
+*/
 
-#include <dynamic_reconfigure/server.h>
-#include <filters/filter_base.h>
-#include <laser_filters/IntensityFilterConfig.h>
-#include <sensor_msgs/LaserScan.h>
+#ifndef SCAN_SHADOW_DETECTOR_H
+#define SCAN_SHADOW_DETECTOR_H
 
 namespace laser_filters
 {
-class LaserScanIntensityFilter : public filters::FilterBase<sensor_msgs::LaserScan>
+class ScanShadowDetector
 {
 public:
-  LaserScanIntensityFilter();
-  bool configure();
-  bool update(const sensor_msgs::LaserScan& input_scan, sensor_msgs::LaserScan& output_scan);
+  float min_angle_tan_, max_angle_tan_;  // Filter angle thresholds
 
-private:
-  std::shared_ptr<dynamic_reconfigure::Server<IntensityFilterConfig>> dyn_server_;
-  void reconfigureCB(IntensityFilterConfig& config, uint32_t level);
-  boost::recursive_mutex own_mutex_;
+  void configure(const float min_angle, const float max_angle)
+  {
+    min_angle_tan_ = tanf(min_angle);
+    max_angle_tan_ = tanf(max_angle);
 
-  IntensityFilterConfig config_ = IntensityFilterConfig::__getDefault__();
+    // Correct sign of tan around singularity points
+    if (min_angle_tan_ < 0.0)
+      min_angle_tan_ = -min_angle_tan_;
+    if (max_angle_tan_ > 0.0)
+      max_angle_tan_ = -max_angle_tan_;
+  }
+  bool isShadow(const float r1, const float r2, const float included_angle)
+  {
+    const float perpendicular_y_ = r2 * sinf(included_angle);
+    const float perpendicular_x_ = r1 - r2 * cosf(included_angle);
+    const float perpendicular_tan_ = fabs(perpendicular_y_) / perpendicular_x_;
+
+    if (perpendicular_tan_ > 0)
+    {
+      if (perpendicular_tan_ < min_angle_tan_)
+        return true;
+    }
+    else
+    {
+      if (perpendicular_tan_ > max_angle_tan_)
+        return true;
+    }
+    return false;
+  }
 };
 }
+
+#endif  //SCAN_SHADOW_DETECTOR_H

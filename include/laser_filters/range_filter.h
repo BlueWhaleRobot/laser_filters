@@ -96,11 +96,6 @@ public:
          i < input_scan.ranges.size();
          i++) // Need to check ever reading in the current scan
     {
-      if(filtered_scan.intensities[i] < 0.1 || std::isnan((double)filtered_scan.ranges[i]))
-      {
-        filtered_scan.ranges[i] = upper_replacement_value_;
-        continue;
-      }
 
       if (filtered_scan.ranges[i] <= lower_threshold_)
       {
@@ -111,8 +106,6 @@ public:
       {
         filtered_scan.ranges[i] = upper_replacement_value_;
       }
-
-
     }
 
     return true;
