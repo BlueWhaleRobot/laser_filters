@@ -122,10 +122,10 @@ namespace laser_filters{
       {
         range_k = scan_in.ranges[i];
         //ROS_ERROR("range_k  %f range_angle %f",range_k, range_angle);
-        if(std::fabs(range_k - range_k_1)>0.1 || std::fabs(range_k_1 - range_k_2)>0.1)
+        if(std::fabs(range_k - range_k_1)>0.1 && std::fabs(range_k_1 - range_k_2)>0.1)
         {
             //去除孤立点
-            indices_to_delete.insert(i);
+            if(i>0) indices_to_delete.insert(i-1);
         }
         range_k_2 = range_k_1;
         range_k_1 = range_k;
