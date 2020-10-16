@@ -1,15 +1,15 @@
 scan_filter_chain:
-- name: angle
-  type: laser_filters/LaserScanAngularBoundsFilterInPlace
-  params:
-    lower_angle: -1.6
-    upper_angle: 1.6
+# - name: angle
+#   type: laser_filters/LaserScanAngularBoundsFilterInPlace
+#   params:
+#     lower_angle: -1.6
+#     upper_angle: 1.6
 - name: range
   type: laser_filters/LaserScanRangeFilter
   params:
     use_message_range_limits: false
     lower_threshold: 0.15
-    upper_threshold: 12.0
+    upper_threshold: 18.0
     lower_replacement_value: -.inf
     upper_replacement_value: .inf
 - name: speckle_filter
