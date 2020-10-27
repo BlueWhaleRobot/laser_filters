@@ -1,11 +1,11 @@
 scan_filter_chain:
-# - name: shadows
-#   type: laser_filters/ScanShadowsFilter
-#   params:
-#     min_angle: 1
-#     max_angle: 179
-#     neighbors: 3
-#     window: 1
+- name: shadows
+  type: laser_filters/ScanShadowsFilter
+  params:
+    min_angle: 1
+    max_angle: 179
+    neighbors: 3
+    window: 1
 - name: range
   type: laser_filters/LaserScanRangeFilter
   params:
@@ -31,4 +31,4 @@ scan_filter_chain:
 
     # filter_type[0] (Distance): Number of consecutive ranges that will be tested for max_distance
     # filter_type[1] (RadiusOutlier): Minimum number of neighbors
-    filter_window: 2
+    filter_window: 3
