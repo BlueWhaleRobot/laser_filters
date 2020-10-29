@@ -49,7 +49,7 @@
 #include "message_filters/subscriber.h"
 
 //Filters
-#include "filters/filter_chain.h"
+#include "filters/filter_chain.hpp"
 
 /** @b ScanShadowsFilter is a simple node that filters shadow points in a laser scan line and publishes the results in a cloud.
  */
